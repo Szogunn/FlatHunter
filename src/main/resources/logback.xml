@@ -1,0 +1,18 @@
+<configuration>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Ustaw poziom logowania dla całej aplikacji (np. INFO) -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+    </root>
+
+    <!-- Logowanie na poziomie DEBUG tylko dla klasy GeoLocationAPI -->
+    <logger name="com.scrapper.utils.GeoLocationAPI" level="DEBUG" />
+
+    <!-- Logowanie na poziomie TRACE dla pakietu com.scrapper.services -->
+    <logger name="com.scrapper.services" level="TRACE" />
+</configuration>
