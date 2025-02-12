@@ -15,4 +15,22 @@ class OfferParserTest {
         offerParser.findPagesQuantity(driver);
     }
 
+    @Test
+    void findApartmentSize() {
+        OfferParser offerParser = new OtoDomFetcher();
+        WebDriver driver = new ChromeDriver();
+        driver.get("https://www.otodom.pl/pl/oferta/wynajme-mieszkanie-aniolki-wrzeszcz-ID4uS5Z");
+        double apartmentSize = offerParser.findApartmentSize(driver);
+        System.out.println(apartmentSize);
+    }
+
+    @Test
+    void findRoomsQuantity() {
+        OfferParser offerParser = new OtoDomFetcher();
+        WebDriver driver = new ChromeDriver();
+        driver.get("https://www.otodom.pl/pl/oferta/wynajme-mieszkanie-aniolki-wrzeszcz-ID4uS5Z");
+        double apartmentSize = offerParser.findRoomsQuantity(driver);
+        System.out.println(apartmentSize);
+    }
+
 }
