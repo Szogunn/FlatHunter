@@ -45,6 +45,5 @@ public class EventsService {
         Offer offer = optionalOffer.get();
         offer.setImagesRating(incomingEvent.getRating());
         offerRepository.save(offer);
-        System.out.println(incomingEvent.getOfferLink() + " " + incomingEvent.getRating());
     }
 }

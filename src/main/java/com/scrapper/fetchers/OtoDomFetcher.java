@@ -153,6 +153,10 @@ public class OtoDomFetcher implements OfferParser {
             imageLinks.add(imgSrc);  // Wyświetl link do obrazu
         }
 
+        if (imageLinks.isEmpty()){
+            throw new NoSuchElementException("Not found any images");
+        }
+
         return imageLinks;
     }
 
