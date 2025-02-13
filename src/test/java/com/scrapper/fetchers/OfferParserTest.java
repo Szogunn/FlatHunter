@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
+import java.util.List;
 import java.util.Map;
 
 class OfferParserTest {
@@ -52,5 +53,15 @@ class OfferParserTest {
         Map<String, String> attributes = offerParser.findAttributes(driver);
         System.out.println(attributes.size());
     }
+
+    @Test
+    void findImagesLinks(){
+        OfferParser offerParser = new OtoDomFetcher();
+        WebDriver driver = new ChromeDriver();
+        driver.get("https://www.otodom.pl/pl/oferta/wynajme-mieszkanie-na-oruni-gornej-ID4uSNK");
+        List<String> imagesLinks = offerParser.findImagesLinks(driver);
+        System.out.println(imagesLinks.size());
+    }
+
 
 }
