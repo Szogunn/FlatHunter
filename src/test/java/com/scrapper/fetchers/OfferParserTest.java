@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
+import java.util.Map;
+
 class OfferParserTest {
 
     @Test
@@ -31,6 +33,24 @@ class OfferParserTest {
         driver.get("https://www.otodom.pl/pl/oferta/wynajme-mieszkanie-aniolki-wrzeszcz-ID4uS5Z");
         double apartmentSize = offerParser.findRoomsQuantity(driver);
         System.out.println(apartmentSize);
+    }
+
+    @Test
+    void findDescription() {
+        OfferParser offerParser = new OtoDomFetcher();
+        WebDriver driver = new ChromeDriver();
+        driver.get("https://www.otodom.pl/pl/oferta/3-pokoje-swietna-komunikacja-jasien-gdansk-ID4uMwm");
+        String description = offerParser.findDescription(driver);
+        System.out.println(description);
+    }
+
+    @Test
+    void findAttributes() {
+        OfferParser offerParser = new OtoDomFetcher();
+        WebDriver driver = new ChromeDriver();
+        driver.get("https://www.otodom.pl/pl/oferta/komfortowe-2-pok-z-oddzielna-kuchnia-i-balkonem-ID4uVA8");
+        Map<String, String> attributes = offerParser.findAttributes(driver);
+        System.out.println(attributes.size());
     }
 
 }

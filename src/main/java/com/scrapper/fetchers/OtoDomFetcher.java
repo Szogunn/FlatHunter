@@ -10,6 +10,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class OtoDomFetcher implements OfferParser {
 
@@ -31,12 +32,11 @@ public class OtoDomFetcher implements OfferParser {
     @Override
     public String findDescription(WebDriver webDriver) {
         WebElement descriptionTag = webDriver.findElement(By.xpath("//div[@data-cy='adPageAdDescription']"));
-        return descriptionTag.getText();
-//        List<WebElement> descriptionsElements = descriptionTag.findElements(By.tagName("p"));
-//        return descriptionsElements
-//                .stream()
-//                .map(WebElement::getText)
-//                .reduce("", (a, b) -> a + b);
+        String text = descriptionTag.getAttribute("innerText");
+        return text == null ? Util.EMPTY :
+                Arrays.stream(text.split("\\R"))
+                .filter(line -> !line.trim().isEmpty())
+                .collect(Collectors.joining("\n"));
     }
 
     @Override
@@ -47,11 +47,7 @@ public class OtoDomFetcher implements OfferParser {
 
     @Override
     public Map<String, String> findAttributes(WebDriver webDriver) {
-        // Znajdź główny kontener dla atrybutów
-        WebElement attributesTag = webDriver.findElement(By.xpath("//div[@class='css-8mnxk5 e1qcxiy10']"));
-
-        // Znajdź wszystkie elementy div zawierające atrybuty
-        List<WebElement> attributesList = attributesTag.findElements(By.xpath(".//div[contains(@class, 'css-1xw0jqp e1qcxiy11')]"));
+        List<WebElement> attributesList = webDriver.findElements(By.xpath(".//div[contains(@class, 'css-1xw0jqp eows69w1')]"));
 
         Map<String, String> attributes = new HashMap<>();
 
@@ -60,9 +56,15 @@ public class OtoDomFetcher implements OfferParser {
             List<WebElement> nestedParagraphs = attribute.findElements(By.tagName("p"));
 
             // Sprawdź, czy są co najmniej dwa paragrafy
-            if (nestedParagraphs.size() >= 2) {
-                String key = nestedParagraphs.get(0).getText().replace(":", "").trim();
-                String value = nestedParagraphs.get(1).getText().trim();
+            if (Util.isEmpty(nestedParagraphs) || nestedParagraphs.size() < 2) {
+                continue;
+            }
+
+            String key = nestedParagraphs.get(0).getAttribute("innerText");
+            String value = nestedParagraphs.get(1).getAttribute("innerText");
+            if (key != null && value != null) {
+                key = key.replace(":", "").trim();
+                value = value.trim();
                 attributes.put(key, value);
             }
         }
