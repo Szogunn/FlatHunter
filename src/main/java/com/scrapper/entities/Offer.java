@@ -16,6 +16,7 @@ public class Offer {
     private String description;
     private Address address;
     private Price price;
+    private Price rentPrice;
     private double pricePerSquare;
     private double apartmentSize;
     private int numberOfRooms;
@@ -147,5 +148,13 @@ public class Offer {
 
     public void setOnSell(boolean onSell) {
         isOnSell = onSell;
+    }
+
+    public Price getRentPrice() {
+        return rentPrice;
+    }
+
+    public void setRentPrice(Price rentPrice) {
+        this.rentPrice = rentPrice;
     }
 }

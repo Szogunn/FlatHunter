@@ -164,4 +164,11 @@ public class OtoDomFetcher implements OfferParser {
     public boolean isOnSell(String url) throws NoSuchElementException {
         return url != null && url.contains("sprzedaz");
     }
+
+    @Override
+    public Price findRentPrice(WebDriver webDriver) throws NoSuchElementException {
+        WebElement priceElement = webDriver.findElement(By.cssSelector("div.css-z3xj2a.e1k1vyr25"));
+        String price = priceElement.getText();
+        return  (Price) ParserManager.parse(price);
+    }
 }

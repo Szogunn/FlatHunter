@@ -19,4 +19,5 @@ public interface OfferParser {
     int findPagesQuantity(WebDriver webDriver) throws NoSuchElementException;
     List<String> findImagesLinks(WebDriver webElement) throws NoSuchElementException;
     boolean isOnSell(String url) throws NoSuchElementException;
+    Price findRentPrice(WebDriver webDriver) throws NoSuchElementException;
 }

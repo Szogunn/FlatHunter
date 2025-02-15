@@ -153,4 +153,18 @@ public class OfferParserUtil {
         }
     }
 
+    public static Price findRentPrice(WebDriver webDriver, String url){
+        OfferParser parser = OfferParserFactory.getParser(url);
+        if (parser == null){
+            return null;
+        }
+
+        try {
+            return parser.findRentPrice(webDriver);
+        } catch (NoSuchElementException exception){
+            LOG.error("Cannot find rent price from url {} by parser {}", url, parser.getClass().getSimpleName());
+            return null;
+        }
+    }
+
 }

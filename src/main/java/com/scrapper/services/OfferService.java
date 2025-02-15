@@ -53,6 +53,11 @@ public class OfferService {
                 Price parsedPrice = OfferParserUtil.findPrice(driver, link);
                 offer.setPrice(parsedPrice);
 
+                if (!onSell){
+                    Price rentPrice = OfferParserUtil.findRentPrice(driver, link);
+                    offer.setRentPrice(rentPrice);
+                }
+
                 double apartmentSize = OfferParserUtil.findApartmentSize(driver, link);
                 offer.setApartmentSize(apartmentSize);
 
