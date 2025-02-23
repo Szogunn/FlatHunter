@@ -8,6 +8,30 @@ public class Address {
     private String cityName;
     private String province;
 
+    public Address() {
+    }
+
+    public Address(String province, String cityName, String district) {
+        this.province = province;
+        this.cityName = cityName;
+        this.district = district;
+    }
+
+    public Address(String province, String cityName, String district, String estate) {
+        this.province = province;
+        this.cityName = cityName;
+        this.district = district;
+        this.estate = estate;
+    }
+
+    public Address(String province, String cityName, String district, String estate, String street) {
+        this.province = province;
+        this.cityName = cityName;
+        this.district = district;
+        this.estate = estate;
+        this.street = street;
+    }
+
     public String getCityName() {
         return cityName;
     }

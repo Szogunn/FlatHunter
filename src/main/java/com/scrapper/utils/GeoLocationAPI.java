@@ -57,9 +57,13 @@ public class GeoLocationAPI {
     }
 
     public static String buildAddressApiForm(Address address) {
+        if (address == null){
+            return Util.EMPTY;
+        }
+
         String firstElement = address.getStreet() != null ? address.getStreet() : address.getEstate();
         if (firstElement == null) {
-            return Util.EMPTY;
+            firstElement = address.getDistrict();
         }
 
         firstElement = firstElement.replace("ul.", "").trim();
