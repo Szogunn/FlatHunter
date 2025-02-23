@@ -8,8 +8,15 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.*;
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class OtoDomFetcher implements OfferParser {
@@ -144,9 +151,10 @@ public class OtoDomFetcher implements OfferParser {
 
     @Override
     public List<String> findImagesLinks(WebDriver webDriver) {
-        List<WebElement> buttons = webDriver.findElements(By.cssSelector(".image-gallery-thumbnail"));
-        List<String> imageLinks = new ArrayList<>();
+        WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(10));
+        List<WebElement> buttons = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".image-gallery-thumbnail")));
 
+        List<String> imageLinks = new ArrayList<>();
         for (WebElement button : buttons) {
             WebElement img = button.findElement(By.tagName("img"));  // Znajdź tag <img> w przycisku
             String imgSrc = img.getAttribute("src");  // Pobierz atrybut "src"
