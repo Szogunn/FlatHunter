@@ -5,7 +5,7 @@ import com.scrapper.entities.Price;
 public class PriceParser implements DataParser<Price> {
     @Override
     public boolean canParse(String input) {
-        return input.endsWith("zł");
+        return input.endsWith("zł") || input.endsWith("zł/mc");
     }
 
     @Override
