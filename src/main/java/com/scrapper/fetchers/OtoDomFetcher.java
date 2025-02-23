@@ -151,12 +151,11 @@ public class OtoDomFetcher implements OfferParser {
 
     @Override
     public List<String> findImagesLinks(WebDriver webDriver) {
-        WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(10));
-        List<WebElement> buttons = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".image-gallery-thumbnail")));
+        List<WebElement> slides = webDriver.findElements(By.cssSelector(".image-gallery-slide"));
 
         List<String> imageLinks = new ArrayList<>();
-        for (WebElement button : buttons) {
-            WebElement img = button.findElement(By.tagName("img"));  // Znajdź tag <img> w przycisku
+        for (WebElement slide : slides) {
+            WebElement img = slide.findElement(By.tagName("img"));  // Znajdź tag <img> w przycisku
             String imgSrc = img.getAttribute("src");  // Pobierz atrybut "src"
             imageLinks.add(imgSrc);  // Wyświetl link do obrazu
         }
