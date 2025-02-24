@@ -6,6 +6,7 @@ import com.scrapper.entities.Price;
 import com.scrapper.utils.Util;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class OtoDomFetcher implements OfferParser {
@@ -151,20 +153,40 @@ public class OtoDomFetcher implements OfferParser {
 
     @Override
     public List<String> findImagesLinks(WebDriver webDriver) {
-        List<WebElement> slides = webDriver.findElements(By.cssSelector(".image-gallery-slide"));
+        try {
+            WebElement acceptButton = webDriver.findElement(By.id("onetrust-accept-btn-handler"));
+            acceptButton.click();
+            WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(5));
+            wait.until(ExpectedConditions.invisibilityOf(acceptButton));
+        } catch (NoSuchElementException ignored){
 
-        List<String> imageLinks = new ArrayList<>();
-        for (WebElement slide : slides) {
-            WebElement img = slide.findElement(By.tagName("img"));  // Znajdź tag <img> w przycisku
-            String imgSrc = img.getAttribute("src");  // Pobierz atrybut "src"
-            imageLinks.add(imgSrc);  // Wyświetl link do obrazu
+        } catch (TimeoutException exception){
+            return null;
         }
 
-        if (imageLinks.isEmpty()){
-            throw new NoSuchElementException("Not found any images");
+        Optional<WebElement> imagesWrapper;
+        try {
+            WebElement nextButton  = webDriver.findElement(By.cssSelector(".css-1nih4v9"));
+            List<WebElement> img = webDriver.findElements(By.cssSelector(".image-gallery-slide"));
+            for (int i = 0; i < img.size() - 1; i++) {
+                nextButton.click();
+            }
+
+            imagesWrapper = Optional.of(webDriver.findElement(By.cssSelector(".image-gallery-slides")));
+        } catch (NoSuchElementException exception ) {
+            WebElement allImagesButton = webDriver.findElement(By.cssSelector(".css-1vac2ev"));
+            allImagesButton.click();
+
+            imagesWrapper = Optional.of(webDriver.findElement(By.cssSelector(".css-cqyy56")));
         }
 
-        return imageLinks;
+        return imagesWrapper.stream()
+                .map(el -> el.findElements(By.tagName("img")))
+                .findAny()
+                .orElseThrow( () -> new NoSuchElementException("Not found any images"))
+                .stream()
+                .map(image -> image.getAttribute("src"))
+                .toList();
     }
 
     @Override

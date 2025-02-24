@@ -58,9 +58,10 @@ class OfferParserTest {
     void findImagesLinks(){
         OfferParser offerParser = new OtoDomFetcher();
         WebDriver driver = new ChromeDriver();
-        driver.get("https://www.otodom.pl/pl/oferta/wynajme-mieszkanie-na-oruni-gornej-ID4uSNK");
+        driver.get("https://www.otodom.pl/pl/oferta/dwupokojowy-apartament-zajezdnia-wrzeszcz-gdansk-ID4uUae");
         List<String> imagesLinks = offerParser.findImagesLinks(driver);
         System.out.println(imagesLinks.size());
+        driver.quit();
     }
 
 
