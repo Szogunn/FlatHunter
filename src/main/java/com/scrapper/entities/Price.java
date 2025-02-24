@@ -24,4 +24,16 @@ public class Price {
     public String getCurrency() {
         return currency;
     }
+
+    public void setValue(double value) {
+        this.value = value;
+    }
+
+    public static Price add(Price price1, Price price2){
+        if (price1 == null || price2 == null){
+            return null;
+        }
+
+        return new Price(price1.getValue() + price1.getValue(), price1.getCurrency());
+    }
 }

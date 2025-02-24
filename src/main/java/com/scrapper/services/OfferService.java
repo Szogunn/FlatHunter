@@ -6,6 +6,7 @@ import com.scrapper.entities.Price;
 import com.scrapper.events.OutgoingEvent;
 import com.scrapper.fetchers.OfferParserUtil;
 import com.scrapper.repositories.OfferRepository;
+import com.scrapper.utils.Util;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.stereotype.Service;
@@ -50,13 +51,8 @@ public class OfferService {
                 Map<String, String> attributes = OfferParserUtil.findAttributes(driver, link);
                 offer.setAttributes(attributes);
 
-                Price parsedPrice = OfferParserUtil.findPrice(driver, link);
+                Price parsedPrice = onSell ? OfferParserUtil.findPrice(driver, link) : OfferParserUtil.findRentPrice(driver, link);
                 offer.setPrice(parsedPrice);
-
-                if (!onSell){
-                    Price rentPrice = OfferParserUtil.findRentPrice(driver, link);
-                    offer.setRentPrice(rentPrice);
-                }
 
                 double apartmentSize = OfferParserUtil.findApartmentSize(driver, link);
                 offer.setApartmentSize(apartmentSize);
@@ -74,8 +70,11 @@ public class OfferService {
 
                 try {
                     Offer savedOffer = offerRepository.save(offer);
-                    OutgoingEvent event = new OutgoingEvent(savedOffer.getLink(), imagesLinks);
-                    eventsService.sendEvent(event);
+                    if (!Util.isEmpty(imagesLinks)) {
+                        OutgoingEvent event = new OutgoingEvent(savedOffer.getLink(), imagesLinks);
+                        eventsService.sendEvent(event);
+                    }
+
                     offerList.add(offer);
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {

@@ -198,6 +198,8 @@ public class OtoDomFetcher implements OfferParser {
     public Price findRentPrice(WebDriver webDriver) throws NoSuchElementException {
         WebElement priceElement = webDriver.findElement(By.cssSelector("div.css-z3xj2a.e1k1vyr25"));
         String price = priceElement.getText();
-        return  (Price) ParserManager.parse(price);
+        Price rentPrice = (Price) ParserManager.parse(price);
+        Price basePrice = findPrice(webDriver);
+        return Price.add(basePrice, rentPrice);
     }
 }

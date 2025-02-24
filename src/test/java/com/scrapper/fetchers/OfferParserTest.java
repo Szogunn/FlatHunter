@@ -1,6 +1,8 @@
 package com.scrapper.fetchers;
 
 
+import com.scrapper.entities.Price;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -62,6 +64,17 @@ class OfferParserTest {
         List<String> imagesLinks = offerParser.findImagesLinks(driver);
         System.out.println(imagesLinks.size());
         driver.quit();
+    }
+
+    @Test
+    void findRentPrice(){
+        OfferParser offerParser = new OtoDomFetcher();
+        WebDriver driver = new ChromeDriver();
+        driver.get("https://www.otodom.pl/pl/oferta/dwupokojowy-apartament-zajezdnia-wrzeszcz-gdansk-ID4uUae");
+        Price rentPrice = offerParser.findRentPrice(driver);
+        driver.quit();
+
+        Assertions.assertNotNull(rentPrice);
     }
 
 
