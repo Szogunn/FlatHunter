@@ -14,10 +14,6 @@ public class OfferParserUtil {
     private static final Logger LOG = LoggerFactory.getLogger(OfferParserUtil.class);
 
     public static Price findPrice(WebDriver webDriver, String url) {
-        if (!isOnSell(url)){
-            return null;
-        }
-
         OfferParser parser = OfferParserFactory.getParser(url);
         if (parser == null){
             return null;
@@ -158,10 +154,6 @@ public class OfferParserUtil {
     }
 
     public static Price findRentPrice(WebDriver webDriver, String url){
-        if (isOnSell(url)){
-            return null;
-        }
-
         OfferParser parser = OfferParserFactory.getParser(url);
         if (parser == null){
             return null;
