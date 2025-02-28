@@ -6,7 +6,7 @@ import java.util.Arrays;
 
 public enum CityCenter {
     WARSZAWA(new Point(52.237049, 21.017532)),
-    GDAŃSK(new Point(54.372158, 18.638306));
+    GDAŃSK(new Point(54.405633, 18.601487));
 
     private final Point centerPoint;
 
