@@ -19,10 +19,12 @@ public class EventsService {
 
     private final RabbitTemplate rabbitTemplate;
     private final OfferRepository offerRepository;
+    private final RecommendationService recommendationService;
 
-    public EventsService(RabbitTemplate rabbitTemplate, OfferRepository offerRepository) {
+    public EventsService(RabbitTemplate rabbitTemplate, OfferRepository offerRepository, RecommendationService recommendationService) {
         this.rabbitTemplate = rabbitTemplate;
         this.offerRepository = offerRepository;
+        this.recommendationService = recommendationService;
     }
 
     public void sendEvent(OutgoingEvent outgoingEvent) {
@@ -44,6 +46,9 @@ public class EventsService {
 
         Offer offer = optionalOffer.get();
         offer.setImagesRating(incomingEvent.getRating());
+
+        double score = recommendationService.calculateOfferAttractiveness(offer);
+        System.out.println(offer.getLink() + " score :" + score);
         offerRepository.save(offer);
     }
 }
