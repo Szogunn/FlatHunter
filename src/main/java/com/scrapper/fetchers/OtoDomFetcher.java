@@ -174,8 +174,12 @@ public class OtoDomFetcher implements OfferParser {
 
             imagesWrapper = Optional.of(webDriver.findElement(By.cssSelector(".image-gallery-slides")));
         } catch (NoSuchElementException exception ) {
-            WebElement allImagesButton = webDriver.findElement(By.cssSelector(".css-1vac2ev"));
-            allImagesButton.click();
+            List<WebElement> allImagesButton = webDriver.findElements(By.cssSelector(".css-1vac2ev"));
+            allImagesButton.stream()
+                    .filter(button -> button.getText().contains("Zdjęcia"))
+                    .findAny()
+                    .ifPresentOrElse(WebElement::click,
+                            () -> webDriver.findElement(By.cssSelector(".css-93f2za.elvndys1")).click());
 
             imagesWrapper = Optional.of(webDriver.findElement(By.cssSelector(".css-cqyy56")));
         }
