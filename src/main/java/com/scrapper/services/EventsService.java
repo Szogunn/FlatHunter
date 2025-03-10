@@ -48,7 +48,7 @@ public class EventsService {
         offer.setImagesRating(incomingEvent.getRating());
 
         double score = recommendationService.calculateOfferAttractiveness(offer);
-        System.out.println(offer.getLink() + " score :" + score);
+        offer.setOfferScore(score);
         offerRepository.save(offer);
     }
 }

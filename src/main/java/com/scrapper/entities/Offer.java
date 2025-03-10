@@ -21,6 +21,7 @@ public class Offer {
     private int numberOfRooms;
     private double distanceFromCenter;
     private double imagesRating;
+    private double offerScore;
 
     public Offer(String link) {
         this.link = link;
@@ -147,5 +148,13 @@ public class Offer {
 
     public void setOnSell(boolean onSell) {
         isOnSell = onSell;
+    }
+
+    public double getOfferScore() {
+        return offerScore;
+    }
+
+    public void setOfferScore(double offerScore) {
+        this.offerScore = offerScore;
     }
 }
