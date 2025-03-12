@@ -1,5 +1,7 @@
 package com.scrapper.entities;
 
+import java.util.Objects;
+
 public class Price {
 
     private double value;
@@ -34,6 +36,27 @@ public class Price {
             return null;
         }
 
-        return new Price(price1.getValue() + price1.getValue(), price1.getCurrency());
+        return new Price(price1.getValue() + price2.getValue(), price1.getCurrency());
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        Price price = (Price) object;
+        return Double.compare(value, price.value) == 0 && Objects.equals(currency, price.currency);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value, currency);
+    }
+
+    @Override
+    public String toString() {
+        return "Price{" +
+                "value=" + value +
+                ", currency='" + currency + '\'' +
+                '}';
     }
 }
