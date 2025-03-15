@@ -1,5 +1,6 @@
 package com.scrapper.services;
 
+import com.scrapper.entities.Audit;
 import com.scrapper.entities.Address;
 import com.scrapper.entities.Offer;
 import com.scrapper.entities.Price;
@@ -20,11 +21,13 @@ public class OfferService {
     private final WebService webService;
     private final EventsService eventsService;
     private final OfferRepository offerRepository;
+    private final AuditOfferService auditOfferService;
 
-    public OfferService(WebService webService, EventsService eventsService, OfferRepository offerRepository) {
+    public OfferService(WebService webService, EventsService eventsService, OfferRepository offerRepository, AuditOfferService auditOfferService) {
         this.webService = webService;
         this.eventsService = eventsService;
         this.offerRepository = offerRepository;
+        this.auditOfferService = auditOfferService;
     }
 
     public List<Offer> parseOffers(String url, String pageSuffix) {
@@ -69,10 +72,12 @@ public class OfferService {
                 List<String> imagesLinks = OfferParserUtil.findImagesLinks(driver, link);
 
                 try {
-                    Offer savedOffer = offerRepository.save(offer);
-                    if (!Util.isEmpty(imagesLinks)) {
-                        OutgoingEvent event = new OutgoingEvent(savedOffer.getLink(), imagesLinks);
-                        eventsService.sendEvent(event);
+                    List<Audit> audits = auditOfferService.audit(offer);
+                    if (audits == null || !audits.isEmpty()){
+                        Offer savedOffer = offerRepository.save(offer);
+                        if (!Util.isEmpty(imagesLinks)) {
+                            eventsService.sendEvent(new OutgoingEvent(savedOffer.getLink(), imagesLinks));
+                        }
                     }
 
                     offerList.add(offer);
