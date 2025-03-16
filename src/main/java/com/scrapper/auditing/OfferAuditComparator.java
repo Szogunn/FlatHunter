@@ -36,7 +36,6 @@ public class OfferAuditComparator implements AuditComparator<Offer> {
             return Optional.empty();
         }
 
-        System.out.println("Sprawdzanie price dla oferty " + oldValue.getLink());
-        return Optional.of(new Audit(oldValue.getLink(), "price", oldPrice.toString(), newPrice.toString(), LocalDateTime.now()));
+        return Optional.of(new Audit(oldValue.getLink(), "price", oldPrice, newPrice, LocalDateTime.now()));
     }
 }

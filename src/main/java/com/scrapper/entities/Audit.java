@@ -1,6 +1,5 @@
 package com.scrapper.entities;
 
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
@@ -8,14 +7,14 @@ import java.time.LocalDateTime;
 @Document
 public class Audit {
 
-    @Id
     private String entityId;
+    private int entityVersion;
     private String fieldName;
-    private String oldValue;
-    private String newValue;
+    private Object oldValue;
+    private Object newValue;
     private LocalDateTime timestamp;
 
-    public Audit(String entityId, String fieldName, String oldValue, String newValue, LocalDateTime timestamp) {
+    public Audit(String entityId, String fieldName, Object oldValue, Object newValue, LocalDateTime timestamp) {
         this.entityId = entityId;
         this.fieldName = fieldName;
         this.oldValue = oldValue;
@@ -39,19 +38,19 @@ public class Audit {
         this.fieldName = fieldName;
     }
 
-    public String getOldValue() {
+    public Object getOldValue() {
         return oldValue;
     }
 
-    public void setOldValue(String oldValue) {
+    public void setOldValue(Object oldValue) {
         this.oldValue = oldValue;
     }
 
-    public String getNewValue() {
+    public Object getNewValue() {
         return newValue;
     }
 
-    public void setNewValue(String newValue) {
+    public void setNewValue(Object newValue) {
         this.newValue = newValue;
     }
 
@@ -61,5 +60,13 @@ public class Audit {
 
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public int getEntityVersion() {
+        return entityVersion;
+    }
+
+    public void setEntityVersion(int entityVersion) {
+        this.entityVersion = entityVersion;
     }
 }

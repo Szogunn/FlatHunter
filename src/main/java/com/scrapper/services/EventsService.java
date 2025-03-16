@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -49,6 +50,10 @@ public class EventsService {
 
         double score = recommendationService.calculateOfferAttractiveness(offer);
         offer.setOfferScore(score);
-        offerRepository.save(offer);
+        try {
+            offerRepository.save(offer);
+        } catch (OptimisticLockingFailureException lockingFailureException){
+            LOG.error("Exception on listener", lockingFailureException);
+        }
     }
 }
