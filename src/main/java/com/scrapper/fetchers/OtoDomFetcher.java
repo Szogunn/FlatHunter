@@ -179,7 +179,7 @@ public class OtoDomFetcher implements OfferParser {
                     .filter(button -> button.getText().contains("Zdjęcia"))
                     .findAny()
                     .ifPresentOrElse(WebElement::click,
-                            () -> webDriver.findElement(By.cssSelector(".css-93f2za.elvndys1")).click());
+                            () -> webDriver.findElement(By.cssSelector(".css-93f2za.ev7r41z1")).click());
 
             imagesWrapper = Optional.of(webDriver.findElement(By.cssSelector(".css-cqyy56")));
         }
