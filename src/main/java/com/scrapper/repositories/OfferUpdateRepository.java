@@ -4,6 +4,7 @@ import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
 import com.scrapper.entities.Audit;
 import com.scrapper.entities.Offer;
+import com.scrapper.services.AuditOfferService;
 import com.scrapper.utils.Util;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -12,6 +13,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Repository
@@ -19,15 +21,17 @@ public class OfferUpdateRepository {
 
     private final MongoTemplate mongoTemplate;
     private final MongoClient mongoClient;
+    private final AuditOfferService auditOfferService;
 
-    public OfferUpdateRepository(MongoTemplate mongoTemplate, MongoClient mongoClient) {
+    public OfferUpdateRepository(MongoTemplate mongoTemplate, MongoClient mongoClient, AuditOfferService auditOfferService) {
         this.mongoTemplate = mongoTemplate;
         this.mongoClient = mongoClient;
+        this.auditOfferService = auditOfferService;
     }
 
-    public boolean updateOfferByAudits(Offer offer, List<Audit> audits) {
+    public Offer updateOfferByAudits(Offer offer, List<Audit> audits) {
         if (Util.isEmpty(audits)){
-            return false;
+            return offer;
         }
 
         Update update = new Update();
@@ -48,11 +52,27 @@ public class OfferUpdateRepository {
                 templateWithSession.insertAll(audits);
 
                 session.commitTransaction();
-                return true;
+                return updatedOffer;
             } catch (Exception e) {
+                System.out.println(Arrays.toString(e.getStackTrace()));
                 session.abortTransaction();
-                return false;
+                return null;
             }
         }
+    }
+
+    public Offer saveUpdateOffer(Offer offer) {
+        Query where = new Query(Criteria.where("_id").is(offer.getLink()));
+        Offer existingOffer = mongoTemplate.findOne(where, Offer.class);
+        if (existingOffer == null){
+            return mongoTemplate.save(offer);
+        }
+
+        List<Audit> audits = auditOfferService.audit(offer, existingOffer);
+        if (Util.isEmpty(audits)){
+            return existingOffer;
+        }
+
+        return updateOfferByAudits(offer, audits);
     }
 }
