@@ -20,13 +20,17 @@ public class AuditOfferService {
         this.offerRepository = offerRepository;
     }
 
-    List<Audit> audit(Offer offer) {
+    public List<Audit> audit(Offer offer) {
         Optional<Offer> existingOffer = offerRepository.findByLink(offer.getLink());
         if (existingOffer.isEmpty()){
             return null;
         }
 
         Offer oldOffer = existingOffer.get();
+        return auditComparator.audit(oldOffer, offer);
+    }
+
+    public List<Audit> audit(Offer offer, Offer oldOffer) {
         return auditComparator.audit(oldOffer, offer);
     }
 }

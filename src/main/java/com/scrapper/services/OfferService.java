@@ -74,18 +74,12 @@ public class OfferService {
 
                 List<String> imagesLinks = OfferParserUtil.findImagesLinks(driver, link);
 
-                List<Audit> audits = auditOfferService.audit(offer);
-                if (audits == null) {
-                    offerRepository.save(offer);
-                } else if (!audits.isEmpty()) {
-                    boolean b = offerUpdateRepository.updateOfferByAudits(offer, audits);
-                    if (!b){
-                        System.out.println("Nie udało się zaktualizować ");
-                    }
-                }
-
-                if (!Util.isEmpty(imagesLinks)) {
-                    eventsService.sendEvent(new OutgoingEvent(offer.getLink(), imagesLinks));
+                Offer savedOffer = offerUpdateRepository.saveUpdateOffer(offer);
+                if (savedOffer == null){
+                    System.out.println("Nie udało się zaktualizować ");
+                } else if (!Util.isEmpty(imagesLinks)) {
+                    System.out.println("wysłanie zdjęcia: " + savedOffer.getLink() + " wersja: " + savedOffer.getVersion());
+                    eventsService.sendEvent(new OutgoingEvent(offer.getLink(), savedOffer.getVersion(), imagesLinks));
                 }
 
                 try {
