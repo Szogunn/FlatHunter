@@ -1,11 +1,13 @@
 package com.scrapper.services;
 
+import com.scrapper.entities.Audit;
 import com.scrapper.entities.Address;
 import com.scrapper.entities.Offer;
 import com.scrapper.entities.Price;
 import com.scrapper.events.OutgoingEvent;
 import com.scrapper.fetchers.OfferParserUtil;
 import com.scrapper.repositories.OfferRepository;
+import com.scrapper.repositories.OfferUpdateRepository;
 import com.scrapper.utils.Util;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -20,11 +22,15 @@ public class OfferService {
     private final WebService webService;
     private final EventsService eventsService;
     private final OfferRepository offerRepository;
+    private final AuditOfferService auditOfferService;
+    private final OfferUpdateRepository offerUpdateRepository;
 
-    public OfferService(WebService webService, EventsService eventsService, OfferRepository offerRepository) {
+    public OfferService(WebService webService, EventsService eventsService, OfferRepository offerRepository, AuditOfferService auditOfferService, OfferUpdateRepository offerUpdateRepository) {
         this.webService = webService;
         this.eventsService = eventsService;
         this.offerRepository = offerRepository;
+        this.auditOfferService = auditOfferService;
+        this.offerUpdateRepository = offerUpdateRepository;
     }
 
     public List<Offer> parseOffers(String url, String pageSuffix) {
@@ -68,13 +74,21 @@ public class OfferService {
 
                 List<String> imagesLinks = OfferParserUtil.findImagesLinks(driver, link);
 
-                try {
-                    Offer savedOffer = offerRepository.save(offer);
-                    if (!Util.isEmpty(imagesLinks)) {
-                        OutgoingEvent event = new OutgoingEvent(savedOffer.getLink(), imagesLinks);
-                        eventsService.sendEvent(event);
+                List<Audit> audits = auditOfferService.audit(offer);
+                if (audits == null) {
+                    offerRepository.save(offer);
+                } else if (!audits.isEmpty()) {
+                    boolean b = offerUpdateRepository.updateOfferByAudits(offer, audits);
+                    if (!b){
+                        System.out.println("Nie udało się zaktualizować ");
                     }
+                }
 
+                if (!Util.isEmpty(imagesLinks)) {
+                    eventsService.sendEvent(new OutgoingEvent(offer.getLink(), imagesLinks));
+                }
+
+                try {
                     offerList.add(offer);
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {

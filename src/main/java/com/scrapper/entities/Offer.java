@@ -1,6 +1,7 @@
 package com.scrapper.entities;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.HashMap;
@@ -22,6 +23,9 @@ public class Offer {
     private double distanceFromCenter;
     private double imagesRating;
     private double offerScore;
+
+    @Version
+    private int version;
 
     public Offer(String link) {
         this.link = link;
@@ -156,5 +160,13 @@ public class Offer {
 
     public void setOfferScore(double offerScore) {
         this.offerScore = offerScore;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
     }
 }
