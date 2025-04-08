@@ -54,6 +54,7 @@ public class EventsService {
             if (!updateResult.wasAcknowledged()) {
                 LOG.error("Failed processing incoming event {}. Event has benn requeue", incomingEvent.getOfferLink());
                 channel.basicNack(deliveryTag, false, true);
+                return;
             }
 
             channel.basicAck(deliveryTag, false);

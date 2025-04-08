@@ -2,10 +2,11 @@ package com.scrapper.repositories;
 
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
+import com.scrapper.auditing.AuditComparator;
 import com.scrapper.entities.Audit;
 import com.scrapper.entities.Offer;
-import com.scrapper.services.AuditOfferService;
 import com.scrapper.utils.Util;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -21,12 +22,12 @@ public class OfferUpdateRepository {
 
     private final MongoTemplate mongoTemplate;
     private final MongoClient mongoClient;
-    private final AuditOfferService auditOfferService;
+    private final AuditComparator<Offer> auditComparator;
 
-    public OfferUpdateRepository(MongoTemplate mongoTemplate, MongoClient mongoClient, AuditOfferService auditOfferService) {
+    public OfferUpdateRepository(MongoTemplate mongoTemplate, MongoClient mongoClient, @Qualifier("offerAuditComparator") AuditComparator<Offer> auditComparator) {
         this.mongoTemplate = mongoTemplate;
         this.mongoClient = mongoClient;
-        this.auditOfferService = auditOfferService;
+        this.auditComparator = auditComparator;
     }
 
     public Offer updateOfferByAudits(Offer offer, List<Audit> audits) {
@@ -68,7 +69,7 @@ public class OfferUpdateRepository {
             return mongoTemplate.save(offer);
         }
 
-        List<Audit> audits = auditOfferService.audit(offer, existingOffer);
+        List<Audit> audits = auditComparator.audit(offer, existingOffer);
         if (Util.isEmpty(audits)){
             return existingOffer;
         }

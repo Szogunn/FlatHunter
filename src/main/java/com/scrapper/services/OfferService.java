@@ -1,12 +1,10 @@
 package com.scrapper.services;
 
-import com.scrapper.entities.Audit;
 import com.scrapper.entities.Address;
 import com.scrapper.entities.Offer;
 import com.scrapper.entities.Price;
 import com.scrapper.events.OutgoingEvent;
 import com.scrapper.fetchers.OfferParserUtil;
-import com.scrapper.repositories.OfferRepository;
 import com.scrapper.repositories.OfferUpdateRepository;
 import com.scrapper.utils.Util;
 import org.openqa.selenium.WebDriver;
@@ -21,15 +19,11 @@ import java.util.Map;
 public class OfferService {
     private final WebService webService;
     private final EventsService eventsService;
-    private final OfferRepository offerRepository;
-    private final AuditOfferService auditOfferService;
     private final OfferUpdateRepository offerUpdateRepository;
 
-    public OfferService(WebService webService, EventsService eventsService, OfferRepository offerRepository, AuditOfferService auditOfferService, OfferUpdateRepository offerUpdateRepository) {
+    public OfferService(WebService webService, EventsService eventsService, OfferUpdateRepository offerUpdateRepository) {
         this.webService = webService;
         this.eventsService = eventsService;
-        this.offerRepository = offerRepository;
-        this.auditOfferService = auditOfferService;
         this.offerUpdateRepository = offerUpdateRepository;
     }
 
@@ -78,7 +72,6 @@ public class OfferService {
                 if (savedOffer == null){
                     System.out.println("Nie udało się zaktualizować ");
                 } else if (!Util.isEmpty(imagesLinks)) {
-                    System.out.println("wysłanie zdjęcia: " + savedOffer.getLink() + " wersja: " + savedOffer.getVersion());
                     eventsService.sendEvent(new OutgoingEvent(offer.getLink(), savedOffer.getVersion(), imagesLinks));
                 }
 
