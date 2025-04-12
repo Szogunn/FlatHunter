@@ -69,7 +69,7 @@ public class OfferUpdateRepository {
             return mongoTemplate.save(offer);
         }
 
-        List<Audit> audits = auditComparator.audit(offer, existingOffer);
+        List<Audit> audits = auditComparator.audit(existingOffer, offer);
         if (Util.isEmpty(audits)){
             return existingOffer;
         }
