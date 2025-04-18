@@ -83,7 +83,7 @@ public class OtoDomFetcher implements OfferParser {
 
     @Override
     public double findApartmentSize(WebDriver webDriver) {
-        List<WebElement> featuresList = webDriver.findElements(By.cssSelector("button.eezlw8k1.css-1nk40gi"));
+        List<WebElement> featuresList = webDriver.findElements(By.cssSelector("button.e13b8hlm1.css-1nk40gi"));
         String svg = "<path fill=\"currentColor\" d=\"M19.983 18.517 5.439 3.973h2.544v-2H2.025V8h2V5.387L18.638 20h-2.614v2h5.959v-6.028h-2v2.544ZM3.996 12.001h-2v2h2v-2ZM1.996 16.001h2v2h-2v-2ZM3.996 20.001h-2v2h2v-2ZM5.997 20.001h2v2h-2v-2ZM11.99 20.001h-2v2h2v-2ZM20.003 10.001h2v2h-2v-2ZM22.003 6.001h-2v2h2v-2ZM20.003 2.001h2v2h-2v-2ZM18.003 2.001h-2v2h2v-2ZM11.989 2.001h2v2h-2v-2Z\"></path>";
 
         List<WebElement> matchedFeature = new ArrayList<>();
@@ -111,7 +111,7 @@ public class OtoDomFetcher implements OfferParser {
 
     @Override
     public int findRoomsQuantity(WebDriver webDriver) {
-        List<WebElement> featuresList = webDriver.findElements(By.cssSelector("button.eezlw8k1.css-1nk40gi"));
+        List<WebElement> featuresList = webDriver.findElements(By.cssSelector("button.e13b8hlm1.css-1nk40gi"));
         String svg = "<path fill=\"currentColor\" d=\"M21 10.958h-7.958v-8l-1-1h-9l-1 1v18l1 1H21l1-1v-9l-1-1Zm-1 9h-6.958v-2H11v2H4.042v-7h2v-2h-2v-7h7v7h-2v2H11v2h2.042v-2H20v7Z\"></path>";
 
         List<WebElement> matchedFeature = new ArrayList<>();
@@ -179,7 +179,7 @@ public class OtoDomFetcher implements OfferParser {
                     .filter(button -> button.getText().contains("Zdjęcia"))
                     .findAny()
                     .ifPresentOrElse(WebElement::click,
-                            () -> webDriver.findElement(By.cssSelector(".css-93f2za.ev7r41z1")).click());
+                            () -> webDriver.findElement(By.cssSelector(".css-1h8s4m6.e1lycg1j2")).click());
 
             imagesWrapper = Optional.of(webDriver.findElement(By.cssSelector(".css-cqyy56")));
         }
