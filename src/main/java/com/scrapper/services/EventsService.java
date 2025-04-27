@@ -1,6 +1,5 @@
 package com.scrapper.services;
 
-import com.mongodb.client.result.UpdateResult;
 import com.rabbitmq.client.Channel;
 import com.scrapper.entities.Offer;
 import com.scrapper.events.ImageRatingIncomingEvent;
@@ -11,6 +10,7 @@ import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.AmqpHeaders;
+import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -26,10 +26,12 @@ public class EventsService {
 
     private final RabbitTemplate rabbitTemplate;
     private final MongoTemplate mongoTemplate;
+    private final RecommendationService recommendationService;
 
-    public EventsService(RabbitTemplate rabbitTemplate, MongoTemplate mongoTemplate) {
+    public EventsService(RabbitTemplate rabbitTemplate, MongoTemplate mongoTemplate, RecommendationService recommendationService) {
         this.rabbitTemplate = rabbitTemplate;
         this.mongoTemplate = mongoTemplate;
+        this.recommendationService = recommendationService;
     }
 
     public void sendEvent(OutgoingEvent outgoingEvent) {
@@ -48,18 +50,31 @@ public class EventsService {
                 .and("imagesRating").ne(incomingEvent.getRating())); //modify only if imagesRating has changed
 
         Update update = Update.update("imagesRating", incomingEvent.getRating());
-        UpdateResult updateResult = mongoTemplate.updateFirst(query, update, Offer.class);
+        FindAndModifyOptions options = FindAndModifyOptions.options().returnNew(true);
 
+        Offer liveOffer;
         try {
-            if (!updateResult.wasAcknowledged()) {
+            try {
+                liveOffer = mongoTemplate.findAndModify(query, update, options, Offer.class);
+                channel.basicAck(deliveryTag, false);
+                if (liveOffer == null){
+                    LOG.info(" nie znaleziono {}", incomingEvent.getOfferLink());
+                    return;
+                }
+            } catch (Exception ex) {
                 LOG.error("Failed processing incoming event {}. Event has benn requeue", incomingEvent.getOfferLink());
                 channel.basicNack(deliveryTag, false, true);
                 return;
             }
-
-            channel.basicAck(deliveryTag, false);
         } catch (IOException e){
             LOG.error("Failed processing incoming event {}. Event has lost.", incomingEvent.getOfferLink(), e); //TODO
+            return;
         }
+
+        double attractiveness = recommendationService.calculateOfferAttractiveness(liveOffer);
+        Query queryAttractiveness = new Query(Criteria.where("_id").is(incomingEvent.getOfferLink())
+                .and("version").is(incomingEvent.getOfferVersion())); //verify version
+        Update updateAttractiveness = Update.update("offerScore", attractiveness);
+        mongoTemplate.updateFirst(queryAttractiveness, updateAttractiveness, Offer.class);
     }
 }
