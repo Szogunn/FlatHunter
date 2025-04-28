@@ -18,13 +18,12 @@ public class Main {
         ConfigurableApplicationContext context = SpringApplication.run(Main.class, args);
         OfferService offerService = context.getBean(OfferService.class);
 
-        OfferSearchCriteria criteria = new OfferSearchCriteria();
-        criteria.setCityLocation(City.GDANSK);
-        criteria.setMaxPrice(3000.0);
-        criteria.setAreaMin(40d);
-        criteria.setAreaMax(60d);
-        int[] roomNumbers = {3};
-        criteria.setRoomsNumber(roomNumbers);
+        OfferSearchCriteria criteria = new OfferSearchCriteria.Builder(true)
+                .cityLocation(City.GDANSK)
+                .maxPrice(3000.0)
+                .areaMin(45.0)
+                .roomsQuantity(new int[] {2,3})
+                .build();
 
         UrlBuilder urlBuilder = UrlBuilderFactory.getUrlBuilder("OtoDom");
         String finalUrl = urlBuilder.buildUrl(criteria);
@@ -32,6 +31,5 @@ public class Main {
 
         List<Offer> offerList = offerService.parseOffers(finalUrl, pageSuffix);
         System.out.println(offerList.size());
-//        System.exit(0);
     }
 }

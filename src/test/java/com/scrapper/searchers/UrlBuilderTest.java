@@ -7,14 +7,13 @@ class UrlBuilderTest {
 
     @Test
     void buildUrl() {
-        OfferSearchCriteria criteria = new OfferSearchCriteria();
-        criteria.setCityLocation(City.GDANSK);
-//        criteria.setOnSell(true);
-        criteria.setMaxPrice(800000D);
-        criteria.setAreaMin(25d);
-        criteria.setAreaMax(60d);
-        int[] roomNumbers = {3,4};
-        criteria.setRoomsNumber(roomNumbers);
+        OfferSearchCriteria criteria = new OfferSearchCriteria.Builder(true)
+                .cityLocation(City.GDANSK)
+                .maxPrice(800000)
+                .areaMin(50)
+                .areaMax(80)
+                .roomsQuantity(new int[]{2,3})
+                .build();
 
         UrlBuilder builder = new OtoDomUrlBuilder();
         String url = builder.buildUrl(criteria);

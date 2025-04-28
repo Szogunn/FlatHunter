@@ -38,8 +38,8 @@ public class OtoDomUrlBuilder implements UrlBuilder {
             url.append("&areaMax=").append(criteria.getAreaMax());
         }
 
-        if (criteria.getRoomsNumber() != null) {
-            int[] roomsNumber = criteria.getRoomsNumber();
+        if (criteria.getRoomsQuantity() != null) {
+            int[] roomsNumber = criteria.getRoomsQuantity();
             url.append("&roomsNumber=%5B");
             for (int i = 0; i < roomsNumber.length; i++) {
                 int roomNumber = roomsNumber[i];
