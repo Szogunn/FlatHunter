@@ -68,6 +68,10 @@ public class OfferService {
 
                 List<String> imagesLinks = OfferParserUtil.findImagesLinks(driver, link);
 
+                if (!validOfferBeforeSave(offer)){
+                    continue;
+                }
+
                 Offer savedOffer = offerUpdateRepository.saveUpdateOffer(offer);
                 if (savedOffer == null){
                     System.out.println("Nie udało się zaktualizować ");
@@ -86,5 +90,17 @@ public class OfferService {
 
         driver.quit();
         return offerList;
+    }
+
+    private boolean validOfferBeforeSave(Offer offer) {
+        if (offer == null){
+            return false;
+        }
+
+        if (offer.getPrice() == null){
+            return false;
+        }
+
+        return true;
     }
 }
