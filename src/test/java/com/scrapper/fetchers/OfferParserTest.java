@@ -70,10 +70,11 @@ class OfferParserTest {
     void findRentPrice(){
         OfferParser offerParser = new OtoDomFetcher();
         WebDriver driver = new ChromeDriver();
-        driver.get("https://www.otodom.pl/pl/oferta/dwupokojowy-apartament-zajezdnia-wrzeszcz-gdansk-ID4uUae");
+        driver.get("https://www.otodom.pl/pl/oferta/mieszkanie-2-pokojowe-os-garnizon-gdansk-ID4wQgO");
         Price rentPrice = offerParser.findRentPrice(driver);
         driver.quit();
 
+        System.out.println(rentPrice);
         Assertions.assertNotNull(rentPrice);
     }
 
