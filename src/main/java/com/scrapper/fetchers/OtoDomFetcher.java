@@ -56,10 +56,9 @@ public class OtoDomFetcher implements OfferParser {
 
     @Override
     public Map<String, String> findAttributes(WebDriver webDriver) {
-        List<WebElement> attributesList = webDriver.findElements(By.xpath(".//div[contains(@class, 'css-1xw0jqp eows69w1')]"));
+        List<WebElement> attributesList = webDriver.findElements(By.xpath(".//div[contains(@class, 'css-1xw0jqp esen0m91')]"));
 
         Map<String, String> attributes = new HashMap<>();
-
         for (WebElement attribute : attributesList) {
             // Znajdź wszystkie paragrafy w ramach danego elementu
             List<WebElement> nestedParagraphs = attribute.findElements(By.tagName("p"));
@@ -101,7 +100,10 @@ public class OtoDomFetcher implements OfferParser {
         }
 
         if (matchedFeature.size() != 1){
-            throw new NoSuchElementException("");
+            Map<String, String> attributes = findAttributes(webDriver);
+            String apartmentSize = attributes.get("Powierzchnia");
+            Object parsedObject = ParserManager.parse(apartmentSize);
+            return parsedObject != null ? (double) parsedObject : 0;
         }
 
         String apartmentSize = matchedFeature.get(0).getText();
@@ -129,7 +131,9 @@ public class OtoDomFetcher implements OfferParser {
         }
 
         if (matchedFeature.size() != 1){
-            throw new NoSuchElementException("");
+            Map<String, String> attributes = findAttributes(webDriver);
+            String roomsQty = attributes.get("Liczba pokoi");
+            return roomsQty != null ? Integer.parseInt(roomsQty) : 0;
         }
 
         String numberOfRooms = matchedFeature.get(0).getText();
@@ -208,7 +212,10 @@ public class OtoDomFetcher implements OfferParser {
             Price rentPrice = (Price) ParserManager.parse(price);
             return Price.add(basePrice, rentPrice);
         } catch (NoSuchElementException exception){
-            return basePrice;
+            Map<String, String> attributes = findAttributes(webDriver);
+            String rent = attributes.get("Czynsz");
+            Price rentPrice = (Price)ParserManager.parse(rent);
+            return Price.add(basePrice, rentPrice);
         }
     }
 }
