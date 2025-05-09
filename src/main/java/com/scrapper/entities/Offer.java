@@ -3,6 +3,7 @@ package com.scrapper.entities;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,9 +24,11 @@ public class Offer {
     private double imagesRating;
     private double offerScore;
     private int version;
+    private LocalDateTime fetchTimestamp;
 
-    public Offer(String link) {
+    public Offer(String link, LocalDateTime dateTime) {
         this.link = link;
+        this.fetchTimestamp = dateTime;
     }
 
     public Offer() {
@@ -165,5 +168,13 @@ public class Offer {
 
     public void setVersion(int version) {
         this.version = version;
+    }
+
+    public LocalDateTime getFetchTimestamp() {
+        return fetchTimestamp;
+    }
+
+    public void setFetchTimestamp(LocalDateTime fetchTimestamp) {
+        this.fetchTimestamp = fetchTimestamp;
     }
 }

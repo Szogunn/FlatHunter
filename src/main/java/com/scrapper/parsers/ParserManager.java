@@ -19,6 +19,10 @@ public class ParserManager {
     }
 
     public static Object parse(String input) {
+        if (input == null){
+            return null;
+        }
+
         List<DataParser<?>> eligibleParsers = parsers.stream().filter(dataParser -> dataParser.canParse(input)).toList();
         if (eligibleParsers.size() != 1) {
             LOG.error("Nie znaleziono odpowiedniego parsera dla danych wejściowych: {}", input);

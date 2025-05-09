@@ -11,6 +11,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +43,7 @@ public class OfferService {
             for (String link : links) {
                 driver.get(link);
 
-                Offer offer = new Offer(link);
+                Offer offer = new Offer(link, LocalDateTime.now());
                 offer.setOnSell(onSell);
 
                 String description = OfferParserUtil.findDescription(driver, link);

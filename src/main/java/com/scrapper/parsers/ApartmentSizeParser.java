@@ -9,6 +9,6 @@ public class ApartmentSizeParser implements DataParser<Double>{
 
     @Override
     public Double parse(String input) {
-        return Double.parseDouble(input.replace("m²", "").trim());
+        return Double.parseDouble(input.replace("m²", "").replace("\u00A0", "").trim());
     }
 }
