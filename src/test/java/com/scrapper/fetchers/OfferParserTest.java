@@ -24,7 +24,7 @@ class OfferParserTest {
     void findApartmentSize() {
         OfferParser offerParser = new OtoDomFetcher();
         WebDriver driver = new ChromeDriver();
-        driver.get("https://www.otodom.pl/pl/oferta/wynajme-mieszkanie-aniolki-wrzeszcz-ID4uS5Z");
+        driver.get("https://www.otodom.pl/pl/oferta/przestronne-mieszkanie-gdansk-wiszace-ogrody-ID4vgFz");
         double apartmentSize = offerParser.findApartmentSize(driver);
         System.out.println(apartmentSize);
     }
@@ -33,7 +33,7 @@ class OfferParserTest {
     void findRoomsQuantity() {
         OfferParser offerParser = new OtoDomFetcher();
         WebDriver driver = new ChromeDriver();
-        driver.get("https://www.otodom.pl/pl/oferta/wynajme-mieszkanie-aniolki-wrzeszcz-ID4uS5Z");
+        driver.get(" https://www.otodom.pl/pl/oferta/wynajme-2-pokojowe-mieszkanie-51m2-jasien-wolne-od-2maja-ID4vcga");
         double apartmentSize = offerParser.findRoomsQuantity(driver);
         System.out.println(apartmentSize);
     }
@@ -51,8 +51,9 @@ class OfferParserTest {
     void findAttributes() {
         OfferParser offerParser = new OtoDomFetcher();
         WebDriver driver = new ChromeDriver();
-        driver.get("https://www.otodom.pl/pl/oferta/komfortowe-2-pok-z-oddzielna-kuchnia-i-balkonem-ID4uVA8");
+        driver.get("https://www.otodom.pl/pl/oferta/przestronne-mieszkanie-gdansk-wiszace-ogrody-ID4vgFz");
         Map<String, String> attributes = offerParser.findAttributes(driver);
+        driver.quit();
         System.out.println(attributes.size());
     }
 
@@ -70,7 +71,7 @@ class OfferParserTest {
     void findRentPrice(){
         OfferParser offerParser = new OtoDomFetcher();
         WebDriver driver = new ChromeDriver();
-        driver.get("https://www.otodom.pl/pl/oferta/mieszkanie-2-pokojowe-os-garnizon-gdansk-ID4wQgO");
+        driver.get("https://www.otodom.pl/pl/oferta/przestronne-mieszkanie-gdansk-wiszace-ogrody-ID4vgFz");
         Price rentPrice = offerParser.findRentPrice(driver);
         driver.quit();
 

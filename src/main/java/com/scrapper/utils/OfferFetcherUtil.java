@@ -1,4 +1,4 @@
-package com.scrapper.services;
+package com.scrapper.utils;
 
 import com.scrapper.entities.Address;
 import com.scrapper.entities.Offer;
@@ -6,35 +6,56 @@ import com.scrapper.entities.Price;
 import com.scrapper.events.OutgoingEvent;
 import com.scrapper.fetchers.OfferParserUtil;
 import com.scrapper.repositories.OfferUpdateRepository;
-import com.scrapper.utils.Util;
+import com.scrapper.searchers.City;
+import com.scrapper.searchers.OfferSearchCriteria;
+import com.scrapper.searchers.UrlBuilder;
+import com.scrapper.searchers.UrlBuilderFactory;
+import com.scrapper.services.EventsService;
+import com.scrapper.services.WebService;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@Service
-public class OfferService {
+@Component
+public class OfferFetcherUtil {
     private final WebService webService;
     private final EventsService eventsService;
     private final OfferUpdateRepository offerUpdateRepository;
 
-    public OfferService(WebService webService, EventsService eventsService, OfferUpdateRepository offerUpdateRepository) {
+    @Value("${task.parameter.serviceName:OtoDom}")
+    private String taskServiceNameParameter;
+
+    OfferSearchCriteria criteria = new OfferSearchCriteria.Builder(false)
+            .cityLocation(City.GDANSK)
+            .maxPrice(3000.0)
+            .areaMin(45.0)
+            .roomsQuantity(new int[] {2,3})
+            .build();
+
+    public OfferFetcherUtil(WebService webService, EventsService eventsService, OfferUpdateRepository offerUpdateRepository) {
         this.webService = webService;
         this.eventsService = eventsService;
         this.offerUpdateRepository = offerUpdateRepository;
     }
 
-    public List<Offer> parseOffers(String url, String pageSuffix) {
+    @Scheduled(fixedDelay = 900000)
+    public void parseOffers() {
+        UrlBuilder urlBuilder = UrlBuilderFactory.getUrlBuilder(taskServiceNameParameter);
+        String url = urlBuilder.buildUrl(criteria);
+        String pageSuffix = urlBuilder.getPageSuffix();
+
         WebDriver driver = new ChromeDriver();
         driver.get(url);
 
         boolean onSell = OfferParserUtil.isOnSell(url);
         int pagesNumbers = OfferParserUtil.findPagesQuantity(driver, url);
-        List<Offer> offerList = new ArrayList<>();
+
         for (int i = 1; i <= pagesNumbers; i++) {
             String pageURL = url.concat(pageSuffix + i);
             driver.get(pageURL);
@@ -81,7 +102,6 @@ public class OfferService {
                 }
 
                 try {
-                    offerList.add(offer);
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
@@ -90,7 +110,6 @@ public class OfferService {
         }
 
         driver.quit();
-        return offerList;
     }
 
     private boolean validOfferBeforeSave(Offer offer) {
