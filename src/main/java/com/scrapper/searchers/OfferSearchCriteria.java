@@ -1,6 +1,6 @@
 package com.scrapper.searchers;
 
-public class OfferSearchCriteria {
+public class OfferSearchCriteria implements SearchCriteria {
 
     private boolean isOnSell;
     private int[] roomsQuantity;
@@ -9,7 +9,7 @@ public class OfferSearchCriteria {
     private double areaMin;
     private double areaMax;
 
-    public OfferSearchCriteria(Builder builder){
+    private OfferSearchCriteria(Builder builder){
         this.isOnSell = builder.isOnSell;
         this.roomsQuantity = builder.roomsNumber;
         this.cityLocation = builder.cityLocation;

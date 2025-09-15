@@ -10,6 +10,7 @@ import com.scrapper.searchers.City;
 import com.scrapper.searchers.OfferSearchCriteria;
 import com.scrapper.searchers.UrlBuilder;
 import com.scrapper.searchers.UrlBuilderFactory;
+import com.scrapper.searchers.SearchCriteria;
 import com.scrapper.services.EventsService;
 import com.scrapper.services.WebService;
 import org.openqa.selenium.WebDriver;
@@ -31,7 +32,7 @@ public class OfferFetcherUtil {
     @Value("${task.parameter.serviceName:OtoDom}")
     private String taskServiceNameParameter;
 
-    OfferSearchCriteria criteria = new OfferSearchCriteria.Builder(false)
+    SearchCriteria criteria = new OfferSearchCriteria.Builder(false)
             .cityLocation(City.GDANSK)
             .maxPrice(3000.0)
             .areaMin(45.0)

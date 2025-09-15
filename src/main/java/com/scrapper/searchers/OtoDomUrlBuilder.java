@@ -1,7 +1,10 @@
 package com.scrapper.searchers;
 
+import com.scrapper.entities.Point;
 import com.scrapper.utils.Util;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 public class OtoDomUrlBuilder implements UrlBuilder {
@@ -11,7 +14,19 @@ public class OtoDomUrlBuilder implements UrlBuilder {
     //https://www.otodom.pl/pl/wyniki/sprzedaz/mieszkanie,3-pokoje/mazowieckie/warszawa/warszawa/warszawa?priceMax=800000.0&areaMin=50.0&areaMax=60.0&roomsNumber=%5BTHREE%5D&viewType=listing
 //    https://www.otodom.pl/pl/wyniki/sprzedaz/mieszkanie%2C3-pokoje/mazowieckie/warszawa/warszawa/warszawa?priceMax=800000.0&areaMin=50.0&areaMax=60.0&roomsNumber=%5BTHREE%5D&viewType=listing&page=2
     @Override
-    public String buildUrl(OfferSearchCriteria criteria) {
+    public String buildUrl(SearchCriteria criteria) {
+        if (criteria instanceof OfferSearchCriteria offerSearchCriteria) {
+            return buildUrl(offerSearchCriteria);
+        }
+
+        if (criteria instanceof LandCriteria landCriteria) {
+            return buildUrl(landCriteria);
+        }
+
+        return null;
+    }
+
+    private String buildUrl(OfferSearchCriteria criteria) {
         StringBuilder url = new StringBuilder(BASE_URL);
 
         String offerType = criteria.isOnSell() ? "/sprzedaz" : "/wynajem";
@@ -52,6 +67,29 @@ public class OtoDomUrlBuilder implements UrlBuilder {
         }
 
         url.append("&viewType=listing");
+        return url.toString();
+    }
+
+    private String buildUrl(LandCriteria criteria) {
+        StringBuilder url = new StringBuilder(BASE_URL);
+
+        url.append("/sprzedaz/dzialka/cala-polska?limit=36");
+        criteria.getDaysSinceCreated().ifPresent(days -> url.append("&daysSinceCreated=").append(days));
+        criteria.getMaxPrice().ifPresent(maxPrice -> url.append("&priceMax=").append(maxPrice));
+        criteria.getAreaMin().ifPresent(area -> url.append("&areaMin=").append(area));
+        criteria.getPlotTypes()
+                .filter(l -> !l.isEmpty())
+                .map(Object::toString)
+                .map(str -> str.replaceAll("\\s+",""))
+                .ifPresent(str -> url.append("&plotType=").append(URLEncoder.encode(str, StandardCharsets.UTF_8)));
+
+        url.append("&by=DEFAULT&direction=DESC&viewType=map");
+        criteria.getMapBounds()
+                .stream()
+                .flatMap(Arrays::stream)
+                .map(Point::toString)
+                .reduce((a, b) -> a + "," + b)
+                .ifPresent(str -> url.append("&mapBounds=").append(URLEncoder.encode(str, StandardCharsets.UTF_8)));
         return url.toString();
     }
 
